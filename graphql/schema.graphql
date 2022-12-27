@@ -1,0 +1,57 @@
+scalar AWSDate
+scalar AWSTime
+scalar AWSDateTime
+scalar AWSTimestamp
+scalar AWSEmail
+scalar AWSJSON
+scalar AWSURL
+scalar AWSPhone
+scalar AWSIPAddress
+
+type Query {
+  getUser(username: String!): User
+  getUserPosts(username: String!): [Post]!
+  getFriendPosts(username: String!): [Post]!
+}
+
+type Mutation {
+  createPost(input: CreatePostInput!): Post!
+  followUser(input: FollowUserInput!): Friend!
+}
+
+type User {
+  username: String!
+  email: AWSEmail!
+  birthDate: String!
+  age: Int!
+  fullName: String!
+  address: String
+  profilePic: AWSURL
+  bio: String
+}
+
+type Post {
+  username: String!
+  email: AWSEmail!
+  text: String
+  timeStamp: AWSTimestamp!
+  media: [String]
+}
+
+type Friend {
+  username: String!
+  following: String!
+  timeStamp: AWSTimestamp!
+}
+
+input CreatePostInput {
+  username: String!
+  email: AWSEmail!
+  text: String
+  media: [String]
+}
+
+input FollowUserInput {
+  username: String!
+  following: String!
+}
