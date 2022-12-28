@@ -12,11 +12,13 @@ type Query {
   getUser(username: String!): User
   getUserPosts(username: String!): [Post]!
   getFriendPosts(username: String!): [Post]!
+  getRecentMessages(input: GetRecentMessagesInput!): [Message]!
 }
 
 type Mutation {
   createPost(input: CreatePostInput!): Post!
   followUser(input: FollowUserInput!): Friend!
+  sendMessage(input: SendMessageInput!): Message!
 }
 
 type User {
@@ -44,6 +46,13 @@ type Friend {
   timeStamp: AWSTimestamp!
 }
 
+type Message {
+  sender: String!
+  reciever: String!
+  text: String!
+  timeStamp: AWSTimestamp!
+}
+
 input CreatePostInput {
   username: String!
   email: AWSEmail!
@@ -54,4 +63,15 @@ input CreatePostInput {
 input FollowUserInput {
   username: String!
   following: String!
+}
+
+input SendMessageInput {
+  sender: String!
+  reciever: String!
+  text: String!
+}
+
+input GetRecentMessagesInput {
+  username: String!
+  reciever: String!
 }

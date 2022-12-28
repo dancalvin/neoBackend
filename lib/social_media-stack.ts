@@ -262,5 +262,55 @@ export class SocialMediaStack extends cdk.Stack {
       typeName: "Mutation",
       fieldName: "followUser",
     });
+
+    // Message
+    const sendMessageLambda = new lambda.Function(this, "sendMessageLambda", {
+      runtime: lambda.Runtime.NODEJS_14_X,
+      code: lambda.Code.fromAsset("functions/api/Message/send"),
+      handler: "index.handler",
+      timeout: cdk.Duration.seconds(10),
+      layers: [lambdaLayer],
+    });
+    socialMediaTable.grantFullAccess(sendMessageLambda);
+    sendMessageLambda.addEnvironment("TABLE_NAME", socialMediaTable.tableName);
+
+    const sendMessageLambdaDataSource = socialMediaApi.addLambdaDataSource(
+      "sendMessageLambdaDataSource",
+      sendMessageLambda
+    );
+    sendMessageLambdaDataSource.createResolver("sendMessageResolver", {
+      typeName: "Mutation",
+      fieldName: "sendMessage",
+    });
+
+    const getRecentMessagesLambda = new lambda.Function(
+      this,
+      "getRecentMessagesLambda",
+      {
+        runtime: lambda.Runtime.NODEJS_14_X,
+        code: lambda.Code.fromAsset("functions/api/Message/get"),
+        handler: "index.handler",
+        timeout: cdk.Duration.seconds(10),
+        layers: [lambdaLayer],
+      }
+    );
+    socialMediaTable.grantFullAccess(getRecentMessagesLambda);
+    getRecentMessagesLambda.addEnvironment(
+      "TABLE_NAME",
+      socialMediaTable.tableName
+    );
+
+    const getRecentMessagesLambdaDataSource =
+      socialMediaApi.addLambdaDataSource(
+        "getRecentMessagesLambdaDataSource",
+        getRecentMessagesLambda
+      );
+    getRecentMessagesLambdaDataSource.createResolver(
+      "getRecentMessagesResolver",
+      {
+        typeName: "Query",
+        fieldName: "getRecentMessages",
+      }
+    );
   }
 }

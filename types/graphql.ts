@@ -21,7 +21,6 @@ export type Scalars = {
   AWSTime: any;
   AWSTimestamp: any;
   AWSURL: any;
-  S3Object: any;
 };
 
 export type CreatePostInput = {
@@ -43,10 +42,24 @@ export type Friend = {
   username: Scalars['String'];
 };
 
+export type GetRecentMessagesInput = {
+  reciever: Scalars['String'];
+  username: Scalars['String'];
+};
+
+export type Message = {
+  __typename?: 'Message';
+  reciever: Scalars['String'];
+  sender: Scalars['String'];
+  text: Scalars['String'];
+  timeStamp: Scalars['AWSTimestamp'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createPost: Post;
   followUser: Friend;
+  sendMessage: Message;
 };
 
 
@@ -57,6 +70,11 @@ export type MutationCreatePostArgs = {
 
 export type MutationFollowUserArgs = {
   input: FollowUserInput;
+};
+
+
+export type MutationSendMessageArgs = {
+  input: SendMessageInput;
 };
 
 export type Post = {
@@ -71,6 +89,7 @@ export type Post = {
 export type Query = {
   __typename?: 'Query';
   getFriendPosts: Array<Maybe<Post>>;
+  getRecentMessages: Array<Maybe<Message>>;
   getUser?: Maybe<User>;
   getUserPosts: Array<Maybe<Post>>;
 };
@@ -81,6 +100,11 @@ export type QueryGetFriendPostsArgs = {
 };
 
 
+export type QueryGetRecentMessagesArgs = {
+  input: GetRecentMessagesInput;
+};
+
+
 export type QueryGetUserArgs = {
   username: Scalars['String'];
 };
@@ -88,6 +112,12 @@ export type QueryGetUserArgs = {
 
 export type QueryGetUserPostsArgs = {
   username: Scalars['String'];
+};
+
+export type SendMessageInput = {
+  reciever: Scalars['String'];
+  sender: Scalars['String'];
+  text: Scalars['String'];
 };
 
 export type User = {
@@ -184,11 +214,13 @@ export type ResolversTypes = {
   CreatePostInput: CreatePostInput;
   FollowUserInput: FollowUserInput;
   Friend: ResolverTypeWrapper<Friend>;
+  GetRecentMessagesInput: GetRecentMessagesInput;
   Int: ResolverTypeWrapper<Scalars['Int']>;
+  Message: ResolverTypeWrapper<Message>;
   Mutation: ResolverTypeWrapper<{}>;
   Post: ResolverTypeWrapper<Post>;
   Query: ResolverTypeWrapper<{}>;
-  S3Object: ResolverTypeWrapper<Scalars['S3Object']>;
+  SendMessageInput: SendMessageInput;
   String: ResolverTypeWrapper<Scalars['String']>;
   User: ResolverTypeWrapper<User>;
 };
@@ -208,11 +240,13 @@ export type ResolversParentTypes = {
   CreatePostInput: CreatePostInput;
   FollowUserInput: FollowUserInput;
   Friend: Friend;
+  GetRecentMessagesInput: GetRecentMessagesInput;
   Int: Scalars['Int'];
+  Message: Message;
   Mutation: {};
   Post: Post;
   Query: {};
-  S3Object: Scalars['S3Object'];
+  SendMessageInput: SendMessageInput;
   String: Scalars['String'];
   User: User;
 };
@@ -260,9 +294,18 @@ export type FriendResolvers<ContextType = any, ParentType extends ResolversParen
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type MessageResolvers<ContextType = any, ParentType extends ResolversParentTypes['Message'] = ResolversParentTypes['Message']> = {
+  reciever?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  sender?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  text?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  timeStamp?: Resolver<ResolversTypes['AWSTimestamp'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createPost?: Resolver<ResolversTypes['Post'], ParentType, ContextType, RequireFields<MutationCreatePostArgs, 'input'>>;
   followUser?: Resolver<ResolversTypes['Friend'], ParentType, ContextType, RequireFields<MutationFollowUserArgs, 'input'>>;
+  sendMessage?: Resolver<ResolversTypes['Message'], ParentType, ContextType, RequireFields<MutationSendMessageArgs, 'input'>>;
 };
 
 export type PostResolvers<ContextType = any, ParentType extends ResolversParentTypes['Post'] = ResolversParentTypes['Post']> = {
@@ -276,13 +319,10 @@ export type PostResolvers<ContextType = any, ParentType extends ResolversParentT
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   getFriendPosts?: Resolver<Array<Maybe<ResolversTypes['Post']>>, ParentType, ContextType, RequireFields<QueryGetFriendPostsArgs, 'username'>>;
+  getRecentMessages?: Resolver<Array<Maybe<ResolversTypes['Message']>>, ParentType, ContextType, RequireFields<QueryGetRecentMessagesArgs, 'input'>>;
   getUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryGetUserArgs, 'username'>>;
   getUserPosts?: Resolver<Array<Maybe<ResolversTypes['Post']>>, ParentType, ContextType, RequireFields<QueryGetUserPostsArgs, 'username'>>;
 };
-
-export interface S3ObjectScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['S3Object'], any> {
-  name: 'S3Object';
-}
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   address?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -307,10 +347,10 @@ export type Resolvers<ContextType = any> = {
   AWSTimestamp?: GraphQLScalarType;
   AWSURL?: GraphQLScalarType;
   Friend?: FriendResolvers<ContextType>;
+  Message?: MessageResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Post?: PostResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
-  S3Object?: GraphQLScalarType;
   User?: UserResolvers<ContextType>;
 };
 
